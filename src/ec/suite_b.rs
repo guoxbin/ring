@@ -227,6 +227,19 @@ pub(crate) fn key_pair_from_bytes(
     Ok(r)
 }
 
+pub(crate) fn key_pair_from_private_key(
+    curve: &'static ec::Curve,
+    private_key_bytes: untrusted::Input,
+    cpu_features: cpu::Features,
+) -> Result<ec::KeyPair, error::KeyRejected> {
+    let seed = ec::Seed::from_bytes(curve, private_key_bytes, cpu_features)
+        .map_err(|error::Unspecified| error::KeyRejected::invalid_component())?;
+
+    let r = ec::KeyPair::derive(seed)
+        .map_err(|error::Unspecified| error::KeyRejected::unexpected_error())?;
+    Ok(r)
+}
+
 pub mod curve;
 pub mod ecdh;
 pub mod ecdsa;
