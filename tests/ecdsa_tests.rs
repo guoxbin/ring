@@ -108,6 +108,26 @@ fn ecdsa_generate_pkcs8_test() {
     }
 }
 
+// Verify that, at least, we generate raw private key that we can read.
+#[test]
+fn ecdsa_generate_private_key_test() {
+    let rng = rand::SystemRandom::new();
+
+    for (alg, expected_len) in &[
+        (&signature::ECDSA_P256_SHA256_ASN1_SIGNING, 32),
+        (&signature::ECDSA_P256_SHA256_FIXED_SIGNING, 32),
+        (&signature::ECDSA_P384_SHA384_ASN1_SIGNING, 48),
+        (&signature::ECDSA_P384_SHA384_FIXED_SIGNING, 48),
+    ] {
+        let private_key = signature::EcdsaKeyPair::generate_private_key(alg, &rng).unwrap();
+
+        assert_eq!(private_key.len(), *expected_len);
+
+        #[cfg(feature = "alloc")]
+            let _ = signature::EcdsaKeyPair::from_private_key(*alg, private_key.as_ref()).unwrap();
+    }
+}
+
 #[test]
 fn signature_ecdsa_verify_asn1_test() {
     test::run(

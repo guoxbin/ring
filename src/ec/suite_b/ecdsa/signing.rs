@@ -26,6 +26,9 @@ use crate::{
     io::der,
     limb, pkcs8, rand, sealed, signature,
 };
+use untrusted;
+use alloc::vec::Vec;
+
 /// An ECDSA signing algorithm.
 pub struct EcdsaSigningAlgorithm {
     curve: &'static ec::Curve,
@@ -116,15 +119,17 @@ impl EcdsaKeyPair {
         Self::new(alg, key_pair, &rng)
     }
 
-    /// Constructs an ECDSA key pair from the private key and public key bytes
-    ///
-    /// The private key must encoded as a big-endian fixed-length integer. For
-    /// example, a P-256 private key must be 32 bytes prefixed with leading
-    /// zeros as needed.
-    ///
-    /// The public key is encoding in uncompressed form using the
-    /// Octet-String-to-Elliptic-Curve-Point algorithm in
-    /// [SEC 1: Elliptic Curve Cryptography, Version 2.0].
+    /// Generate raw private_key
+    pub fn generate_private_key(
+        alg: &'static EcdsaSigningAlgorithm,
+        rng: &dyn rand::SecureRandom,
+    ) -> Result<Vec<u8>, error::Unspecified> {
+        let private_key = ec::Seed::generate(alg.curve, rng, cpu::features())?;
+        Ok(private_key.bytes_less_safe().to_vec())
+    }
+
+    /// Constructs an ECDSA key pair directly from the big-endian-encoded
+    /// private key and public key bytes.
     ///
     /// This is intended for use by code that deserializes key pairs. It is
     /// recommended to use `EcdsaKeyPair::from_pkcs8()` (with a PKCS#8-encoded
@@ -147,7 +152,8 @@ impl EcdsaKeyPair {
         Self::new(alg, key_pair, &rng)
     }
 
-    /// Constructs an ECDSA key pair from the private key bytes
+    /// Constructs an ECDSA key pair directly from the big-endian-encoded
+    /// private key
     pub fn from_private_key(
         alg: &'static EcdsaSigningAlgorithm,
         private_key: &[u8],
