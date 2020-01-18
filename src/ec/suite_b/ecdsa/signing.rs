@@ -27,6 +27,7 @@ use crate::{
     limb, pkcs8, rand, sealed, signature,
 };
 use untrusted;
+use alloc::vec::Vec;
 
 /// An ECDSA signing algorithm.
 pub struct EcdsaSigningAlgorithm {
@@ -116,6 +117,15 @@ impl EcdsaKeyPair {
         Ok(Self::new(alg, key_pair))
     }
 
+    /// Generate raw private_key
+    pub fn generate_private_key(
+        alg: &'static EcdsaSigningAlgorithm,
+        rng: &dyn rand::SecureRandom,
+    ) -> Result<Vec<u8>, error::Unspecified> {
+        let private_key = ec::Seed::generate(alg.curve, rng, cpu::features())?;
+        Ok(private_key.bytes_less_safe().to_vec())
+    }
+
     /// Constructs an ECDSA key pair directly from the big-endian-encoded
     /// private key and public key bytes.
     ///
@@ -136,6 +146,8 @@ impl EcdsaKeyPair {
         Ok(Self::new(alg, key_pair))
     }
 
+    /// Constructs an ECDSA key pair directly from the big-endian-encoded
+    /// private key
     pub fn from_private_key(
         alg: &'static EcdsaSigningAlgorithm,
         private_key: &[u8],
