@@ -1,16 +1,16 @@
 [package]
-authors = ["Brian Smith <brian@briansmith.org>"]
+authors = ["Brian Smith <brian@briansmith.org>", "GB <guoxbin@gmail.com>"]
 build = "build.rs"
 categories = ["cryptography", "no-std"]
-description = "Safe, fast, small crypto using Rust."
+description = "Extended ring lib by dtool"
 documentation = "https://briansmith.org/rustdoc/ring/"
 edition = "2018"
 keywords = ["crypto", "cryptography", "rand", "ECC", "RSA"]
 license-file = "LICENSE"
-name = "ring"
+name = "ring-fork-dtool"
 readme = "doc/link-to-readme.md"
-repository = "https://github.com/briansmith/ring"
-version = "0.16.9"
+repository = "https://github.com/guoxbin/ring"
+version = "0.16.11"
 
 # Prevent multiple versions of *ring* from being linked into the same program.
 links = "ring-asm"

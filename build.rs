@@ -230,11 +230,11 @@ const LD_FLAGS: &[&str] = &[];
 const ASM_TARGETS: &[(&str, Option<&str>, &str)] = &[
     ("x86_64", Some("ios"), "macosx"),
     ("x86_64", Some("macos"), "macosx"),
-    ("x86_64", Some(WINDOWS), "nasm"),
+    //("x86_64", Some(WINDOWS), "nasm"),
     ("x86_64", None, "elf"),
     ("aarch64", Some("ios"), "ios64"),
     ("aarch64", None, "linux64"),
-    ("x86", Some(WINDOWS), "win32n"),
+    //("x86", Some(WINDOWS), "win32n"),
     ("x86", Some("ios"), "macosx"),
     ("x86", None, "elf"),
     ("arm", Some("ios"), "ios32"),
@@ -248,7 +248,7 @@ const MSVC_OBJ_EXT: &str = "obj";
 
 fn main() {
     if let Ok(package_name) = std::env::var("CARGO_PKG_NAME") {
-        if package_name == "ring" {
+        if package_name == "ring-fork-dtool" {
             ring_build_rs_main();
             return;
         }
