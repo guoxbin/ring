@@ -156,6 +156,40 @@ impl Ed25519KeyPair {
         Ok(Self::from_seed_(seed))
     }
 
+    /// Constructs a Ed25519 key pair from the private key.
+    pub fn from_private_key_unchecked(private_key: &[u8]) -> Result<Self, error::KeyRejected> {
+        if private_key.len() != SCALAR_LEN + PREFIX_LEN {
+            return Err(error::KeyRejected::invalid_encoding());
+        }
+
+        let (private_scalar, private_prefix) = private_key.split_at(SCALAR_LEN);
+
+        let private_scalar = Scalar::new(private_scalar.try_into().unwrap());
+
+        let mut a = ExtPoint::new_at_infinity();
+        unsafe {
+            GFp_x25519_ge_scalarmult_base(&mut a, &private_scalar);
+        }
+
+        Ok(Self {
+            private_scalar,
+            private_prefix: private_prefix.try_into().unwrap(),
+            public_key: PublicKey(a.into_encoded_point()),
+        })
+    }
+
+    /// Get private key
+    pub fn private_key(&self) -> [u8; SCALAR_LEN + PREFIX_LEN] {
+
+        let mut private_key = [0; SCALAR_LEN + PREFIX_LEN];
+
+        (&mut private_key[0..32]).copy_from_slice(self.private_scalar.as_bytes());
+
+        (&mut private_key[32..64]).copy_from_slice(&self.private_prefix);
+
+        private_key
+    }
+
     fn from_seed_(seed: &Seed) -> Self {
         let h = digest::digest(&digest::SHA512, seed);
         let (private_scalar, private_prefix) = h.as_ref().split_at(SCALAR_LEN);

@@ -176,3 +176,43 @@ fn ed25519_test_public_key_coverage() {
         format!("{:?}", key_pair)
     );
 }
+
+#[test]
+fn test_ed25519_get_private_key() {
+    test::run(test_file!("ed25519_get_private_key_tests.txt"), |section, test_case| {
+        assert_eq!(section, "");
+        let seed = test_case.consume_bytes("SEED");
+        assert_eq!(32, seed.len());
+
+        let private_key = test_case.consume_bytes("PRV");
+        assert_eq!(64, private_key.len());
+
+        {
+            let key_pair = Ed25519KeyPair::from_seed_unchecked(&seed).unwrap();
+            let actual_private_key = key_pair.private_key();
+            assert_eq!(&private_key[..], actual_private_key.as_ref());
+        }
+
+        Ok(())
+    });
+}
+
+#[test]
+fn test_ed25519_from_private_key_unchecked() {
+    test::run(test_file!("ed25519_from_private_key_tests.txt"), |section, test_case| {
+        assert_eq!(section, "");
+        let private_key = test_case.consume_bytes("PRV");
+        assert_eq!(64, private_key.len());
+
+        let public_key = test_case.consume_bytes("PUB");
+        assert_eq!(32, public_key.len());
+
+        {
+            let key_pair = Ed25519KeyPair::from_private_key_unchecked(&private_key).unwrap();
+            let actual_public_key = key_pair.public_key();
+            assert_eq!(&public_key[..], actual_public_key.as_ref());
+        }
+
+        Ok(())
+    });
+}

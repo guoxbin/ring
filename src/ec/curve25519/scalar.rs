@@ -52,6 +52,14 @@ impl Scalar {
         unsafe { GFp_x25519_sc_reduce(&mut unreduced) };
         Self((&unreduced[..SCALAR_LEN]).try_into().unwrap())
     }
+
+    pub fn as_bytes(&self) -> &[u8; SCALAR_LEN] {
+        &self.0
+    }
+
+    pub fn new(bytes: [u8; SCALAR_LEN]) -> Self{
+        Self(bytes)
+    }
 }
 
 #[repr(transparent)]
