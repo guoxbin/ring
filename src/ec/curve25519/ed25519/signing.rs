@@ -180,7 +180,6 @@ impl Ed25519KeyPair {
 
     /// Get private key
     pub fn private_key(&self) -> [u8; SCALAR_LEN + PREFIX_LEN] {
-
         let mut private_key = [0; SCALAR_LEN + PREFIX_LEN];
 
         (&mut private_key[0..32]).copy_from_slice(self.private_scalar.as_bytes());

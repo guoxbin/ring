@@ -26,8 +26,8 @@ use crate::{
     io::der,
     limb, pkcs8, rand, sealed, signature,
 };
-use untrusted;
 use alloc::vec::Vec;
+use untrusted;
 
 /// An ECDSA signing algorithm.
 pub struct EcdsaSigningAlgorithm {
@@ -639,8 +639,7 @@ mod tests {
                     }
                 };
 
-                let private_key =
-                    signature::EcdsaKeyPair::from_private_key(alg, &d).unwrap();
+                let private_key = signature::EcdsaKeyPair::from_private_key(alg, &d).unwrap();
                 let rng = test::rand::FixedSliceRandom { bytes: &k };
 
                 let actual_result = private_key
@@ -678,8 +677,7 @@ mod tests {
                     }
                 };
 
-                let private_key =
-                    signature::EcdsaKeyPair::from_private_key(alg, &d).unwrap();
+                let private_key = signature::EcdsaKeyPair::from_private_key(alg, &d).unwrap();
                 let rng = test::rand::FixedSliceRandom { bytes: &k };
 
                 let actual_result = private_key

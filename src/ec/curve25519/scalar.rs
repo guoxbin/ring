@@ -57,7 +57,7 @@ impl Scalar {
         &self.0
     }
 
-    pub fn new(bytes: [u8; SCALAR_LEN]) -> Self{
+    pub fn new(bytes: [u8; SCALAR_LEN]) -> Self {
         Self(bytes)
     }
 }

@@ -124,7 +124,7 @@ fn ecdsa_generate_private_key_test() {
         assert_eq!(private_key.len(), *expected_len);
 
         #[cfg(feature = "alloc")]
-            let _ = signature::EcdsaKeyPair::from_private_key(*alg, private_key.as_ref()).unwrap();
+        let _ = signature::EcdsaKeyPair::from_private_key(*alg, private_key.as_ref()).unwrap();
     }
 }
 
